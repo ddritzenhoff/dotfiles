@@ -21,3 +21,10 @@ alias mkdir='mkdir -pv'
 alias df='df -h'
 alias ..='cd ..'
 
+# Source - https://stackoverflow.com/a
+# Posted by Joe the Person, modified by community. See post 'Timeline' for change history
+# Retrieved 2025-12-14, License - CC BY-SA 4.0
+
+autoload -U colors && colors
+PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%}%% "
+
