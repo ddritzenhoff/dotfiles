@@ -3,6 +3,7 @@
 
 # Files to not ignore
 !/.gitignore
+!/README.md
 
 # Folders to not ignore
 !/nvim/
