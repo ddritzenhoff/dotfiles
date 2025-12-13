@@ -8,3 +8,5 @@
 # Folders to not ignore
 !/nvim/
 !/ghostty/
+!/zsh/
+
