@@ -11,6 +11,8 @@
 !/fonts/
 !/backgrounds/
 !/my-icons/
+!/integrations/
+!/tests/
 
 # Shipped layouts and themes are replaced by Herdr. Clone before editing.
 /layouts/.state/

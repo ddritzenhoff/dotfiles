@@ -15,6 +15,13 @@ not automatically commit or push.
 - `layouts/my-layout.json`: personal clone of Herdr's `main` layout. A lone
   pane has no frame or header (`lone: false`), and the workspace's outer
   padding is zero. Split panes keep their headers and focus outlines.
+- `mods/my-status/`: personal clone of the bottom status bar. For the focused
+  Pi terminal it shows effort, current context tokens/percentage, model, then
+  caching, in that order. Cumulative input/output totals remain in tooltips.
+- `integrations/pi/herdr-status.ts`: Pi extension that publishes metrics to
+  its core terminal's `pi.metrics` label. No prompts or conversation content
+  are exported. The extension executes local `hc label`; it makes no model
+  calls, network requests or file writes.
 - Optional `programs.json`, personal layouts, mods, themes, fonts, backgrounds
   and `my-icons/` assets are also eligible for tracking when created.
 
@@ -33,6 +40,62 @@ herdr-app do layout.switch '{"name":"my-layout"}'
 ```
 
 Layout selection is local runtime state, intentionally not versioned.
+
+Install the Pi integration (Node 22.19+ / Pi and `hc` must be installed):
+
+```sh
+sh ~/.config/herdr-app/integrations/pi/install.sh
+```
+
+This creates a symlink in `~/.pi/agent/extensions/` pointing to the tracked
+extension. It refuses to overwrite another file. Run `/reload` in each existing
+Pi session once; new interactive sessions discover the extension automatically.
+Repeat installation on other machines if you want their Pi sessions to report
+metrics too. The extension does nothing outside Herdr or in print/RPC helpers.
+In interactive Herdr sessions it replaces Pi's entire two-line footer with a
+zero-row component, giving that space back to the transcript/editor. Run `/reload`
+after updating the extension to apply this. Pi's editor and its colored effort
+bars are unchanged. Disabling the extension restores Pi's default footer.
+
+### Bottom-bar metrics
+
+- Metrics follow the focused terminal, not a sum of all agents. Shells, mod panes
+  and other agents do not show leftover Pi metrics. A process-ID check rejects
+  labels left by a previous Pi process in the same terminal.
+- The bare effort label (`high`, for example) is the configured reasoning effort
+  (off/minimal/low/medium/high/xhigh/max), not an inferred task difficulty. It uses
+  Pi's rendered editor-bar color, including custom themes and terminal palettes.
+  Run `/reload` once after updating the bridge to export that color; until then
+  the bar uses Pi's built-in dark palette (`high` is purple, `#9776e5`). Model and
+  effort changes update it; theme changes are reflected on the next metric update.
+- **155.8k/500k (31.2%)** shows current context tokens / window size, with the
+  percentage in parentheses. These are estimates, not cumulative session totals.
+  It turns yellow at 75% and red at 90%; hover for unrounded counts. After
+  compaction the count can be unknown until the next response.
+- **Model** follows the context figures. It truncates on narrow windows rather
+  than hiding completely; hover for the full provider/model name.
+- **cache 99.8% R7.1M W…** comes last. The percentage is cache reads / total input
+  on the latest assistant prompt, matching Pi's CH figure, not a session-wide
+  average. R / W are cumulative cache read / write token counts; zero writes
+  are omitted. Narrow windows show only the cache-hit rate (counts stay in the
+  tooltip). Older bridges without a hit rate show the counts until `/reload`.
+- Hover context or cache to see cumulative session input/output and estimated
+  API cost (not a subscription bill). Totals include cache, compacted/abandoned
+  history, summaries, nested tool usage and cache-warming entries, matching Pi's
+  accounting. Updates happen after completed model turns, not token-by-token;
+  idle cache-warming usage appears on the next update.
+- The dense group is ordered: `high · 155.8k/500k (31.2%) · gpt-6.1-sol · cache 99.8% R7.1M`.
+- A focused Pi without valid metrics shows `Pi stats: /reload to connect`.
+  The integration currently supports Pi, not Claude Code or Codex CLI.
+
+Validate changes (tests require a Node version with native TypeScript support,
+like Node 26 used on this machine):
+
+```sh
+node --test ~/.config/herdr-app/tests/*.test.mjs
+herdr-app check ~/.config/herdr-app/mods/my-status
+herdr-app status
+```
 
 ## Future changes
 
