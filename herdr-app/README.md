@@ -115,8 +115,9 @@ column. There are no repository/scope/view selectors or refresh button.
 Click a line or line number to outline it; hovering another line independently
 reveals its blue **+**. Click + to open an inset comment card beside that side's
 code. Shift-click lines or + to select a range. Saved drafts keep the same card
-styling and survive restarts; Edit/Delete, collapsible cards, Viewed checkboxes
-and context expansion are available. Viewed updates per file immediately,
+styling and survive restarts; Edit/Delete, collapsible cards and Viewed checkboxes
+are available. Gutter arrows reveal ten frozen-context lines above/below hunks
+or from either end of a gap between hunks in the same file. Viewed updates per file immediately,
 without dimming the other checkboxes. **Review & send** previews the batch before
 sending it to the originating idle agent. Difftastic supplies structural highlights
 with text fallback. Background changes never move an open editor's snapshot;
