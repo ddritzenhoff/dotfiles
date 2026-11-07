@@ -8,8 +8,9 @@ not automatically commit or push.
 ## Personal configuration
 
 - `settings.json`: appearance, zoom, sounds and terminal preferences.
-- `keys.json`: keyboard shortcuts, including Cmd+Shift+1–9 to select spaces.
-  Cmd+1–9 still selects tabs; Ctrl+1–9 still selects spaces.
+- `keys.json`: keyboard shortcuts, including Cmd+Shift+1–9 to select spaces
+  and Cmd+Shift+R to open Agent Review beside the focused agent. Cmd+1–9 still selects tabs;
+  Ctrl+1–9 still selects spaces.
 - `mods/my-spaces/`: personal spaces sidebar with numbered colored icons,
   including worktrees. Numbers follow space selection order and update on reorder.
 - `layouts/my-layout.json`: personal clone of Herdr's `main` layout. A lone
@@ -18,6 +19,8 @@ not automatically commit or push.
   horizontal wrapper inset to balance unused fractional-cell width between the
   left and right sides (no columns lost at the current window size). Split panes
   keep their headers and focus outlines.
+- `mods/review-tabs/`: personal clone of the tab bar with the review-tab launcher.
+  Existing tabs, pane controls and Changes/Files panels remain available.
 - `mods/my-status/`: personal clone of the bottom status bar. For the focused
   Pi terminal it shows effort, current context tokens/percentage, model, then
   caching, in that order. Cumulative input/output totals remain in tooltips.
@@ -99,6 +102,37 @@ node --test ~/.config/herdr-app/tests/*.test.mjs
 herdr-app check ~/.config/herdr-app/mods/my-status
 herdr-app status
 ```
+
+## Agent Review
+
+In `my-layout`, focus an agent and press **Cmd+Shift+R**. A review tab opens
+immediately to its right; pressing the shortcut again reuses it. Repository and
+recipient are pinned to that agent. All current uncommitted changes are shown
+in a GitHub-style **Files changed** page: file tree on the left, stacked diff
+cards on the right. Modified files are split; added/deleted files use a single
+column. There are no repository/scope/view selectors or refresh button.
+
+Hover a code line and click its blue **+** to open an inline comment editor.
+Shift-click another + to select a range. Drafts stay beside their code and
+survive restarts; Edit/Delete, collapsible cards, Viewed checkboxes and context
+expansion are available. **Review & send** previews the batch before sending
+it to the originating idle agent. Difftastic supplies structural highlights
+with text fallback. Background changes never move an open editor's snapshot;
+outdated comments retain their original quotes.
+
+Build the Rust backend once after restoring these dotfiles (Rust/Cargo, Git and
+Difftastic 0.72.0 required):
+
+```sh
+sh ~/.config/herdr-app/tools/review-backend/build.sh
+herdr-app check ~/.config/herdr-app/mods/review
+herdr-app check ~/.config/herdr-app/mods/review-tabs
+```
+
+Source: `tools/review-backend/` (Rust), `mods/review/` (native UI), and
+`mods/review-tabs/` (tab launcher). Drafts, code snapshots, viewed state and sent
+archives live only in Git-ignored `data/review/`. See [the review guide](tools/review-backend/README.md)
+for usage, safety limits and testing.
 
 ## Future changes
 

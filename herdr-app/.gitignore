@@ -13,6 +13,7 @@
 !/my-icons/
 !/integrations/
 !/tests/
+!/tools/
 
 # Shipped layouts and themes are replaced by Herdr. Clone before editing.
 /layouts/.state/
@@ -49,6 +50,7 @@
 # Generated helpers, dependencies, editor artifacts and recovery files.
 .DS_Store
 node_modules/
+/tools/review-backend/target/
 jsconfig.json
 *.d.ts
 *.error
