@@ -4,9 +4,11 @@
 # Files to not ignore
 !/.gitignore
 !/README.md
+!/AGENTS.md
 
 # Folders to not ignore
 !/nvim/
 !/ghostty/
 !/zsh/
+!/herdr-app/
 
