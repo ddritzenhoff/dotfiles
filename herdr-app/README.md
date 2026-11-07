@@ -8,7 +8,10 @@ not automatically commit or push.
 ## Personal configuration
 
 - `settings.json`: appearance, zoom, sounds and terminal preferences.
-- `keys.json`: keyboard shortcuts (a tracked snapshot of the current defaults).
+- `keys.json`: keyboard shortcuts, including Cmd+Shift+1–9 to select spaces.
+  Cmd+1–9 still selects tabs; Ctrl+1–9 still selects spaces.
+- `mods/my-spaces/`: personal spaces sidebar with numbered colored icons,
+  including worktrees. Numbers follow space selection order and update on reorder.
 - `layouts/my-layout.json`: personal clone of Herdr's `main` layout. A lone
   pane has no frame or header (`lone: false`), and the workspace's outer
   padding is zero. Split panes keep their headers and focus outlines.
