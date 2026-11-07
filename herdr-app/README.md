@@ -112,11 +112,13 @@ in a GitHub-style **Files changed** page: file tree on the left, stacked diff
 cards on the right. Modified files are split; added/deleted files use a single
 column. There are no repository/scope/view selectors or refresh button.
 
-Hover a code line and click its blue **+** to open an inline comment editor.
-Shift-click another + to select a range. Drafts stay beside their code and
-survive restarts; Edit/Delete, collapsible cards, Viewed checkboxes and context
-expansion are available. **Review & send** previews the batch before sending
-it to the originating idle agent. Difftastic supplies structural highlights
+Click a line or line number to outline it; hovering another line independently
+reveals its blue **+**. Click + to open an inset comment card beside that side's
+code. Shift-click lines or + to select a range. Saved drafts keep the same card
+styling and survive restarts; Edit/Delete, collapsible cards, Viewed checkboxes
+and context expansion are available. Viewed updates per file immediately,
+without dimming the other checkboxes. **Review & send** previews the batch before
+sending it to the originating idle agent. Difftastic supplies structural highlights
 with text fallback. Background changes never move an open editor's snapshot;
 outdated comments retain their original quotes.
 
