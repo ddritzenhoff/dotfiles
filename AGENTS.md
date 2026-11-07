@@ -6,8 +6,17 @@ push unless asked.
 
 ## Herdr
 
-- Keep future Herdr customizations in this repo's `herdr-app/` component, not
-  in a separate copy. Read `herdr-app/README.md` for tracking and restore steps.
+- Keep personal Herdr configuration in this repo's `herdr-app/` component.
+  Changes is maintained only in the `herdr-app/vendor/herdr-changes` Git submodule
+  (https://github.com/ddritzenhoff/herdr-changes), not duplicated in dotfiles.
+  `mods/review`, `mods/review-tabs` and `tools/review-backend` are live symlinks
+  into it. `~/programming/changes` is a convenience link to the same checkout.
+  Commit/push Changes code in that repository first, then update the submodule
+  reference in dotfiles. Never replace its links with copied source or run the
+  copy-based upstream installer over this linked setup. Read `herdr-app/README.md`
+  for tracking, build and restore steps. After Changes code/asset edits, save
+  unsaved review comments and run `sh herdr-app/integrations/changes/setup.sh`
+  to rebuild/check and reload the linked mods; Herdr does not watch `vendor/`.
 - Read the app-generated `herdr-app/AGENTS.md` before changing Herdr. Do not
   edit or version it, the generated `.d.ts` files, or session/runtime state.
 - The personal layout is `herdr-app/layouts/my-layout.json`. Preserve its

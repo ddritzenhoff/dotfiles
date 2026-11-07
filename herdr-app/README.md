@@ -19,8 +19,10 @@ not automatically commit or push.
   horizontal wrapper inset to balance unused fractional-cell width between the
   left and right sides (no columns lost at the current window size). Split panes
   keep their headers and focus outlines.
-- `mods/review-tabs/`: personal clone of the tab bar with the review-tab launcher.
-  Existing tabs, pane controls and Changes/Files panels remain available.
+- `mods/review-tabs`: relative symlink to the Changes tab bar in the
+  `vendor/herdr-changes` submodule. Existing tabs, pane controls and Changes/Files
+  panels remain available. `mods/review` and `tools/review-backend` are linked
+  to that same checkout; none of its software is duplicated in dotfiles.
 - `mods/my-status/`: personal clone of the bottom status bar. For the focused
   Pi terminal it shows effort, current context tokens/percentage, model, then
   caching, in that order. Cumulative input/output totals remain in tooltips.
@@ -38,7 +40,20 @@ Do not force-add these files. Never put credentials in tracked configuration.
 ## Restore
 
 Use this repository as `~/.config` (preserve any existing configuration first),
-then launch Herdr. Its shipped files are generated automatically. Activate the
+then initialize/build the pinned Changes dependency (Git, Cargo, Difftastic
+0.72.0 and Herdr required):
+
+```sh
+sh ~/.config/herdr-app/integrations/changes/setup.sh
+```
+
+The script initializes the submodule only when missing, verifies the tracked
+relative symlinks, builds in the source checkout and checks both mods. It never
+copies source, resets existing development changes, or changes settings/drafts.
+For a new clone, `git clone --recurse-submodules` also initializes the submodule.
+The backend binary is generated locally and is not committed.
+
+Launch Herdr; its shipped files are generated automatically. Activate the
 personal layout with:
 
 ```sh
@@ -117,25 +132,60 @@ reveals its blue **+**. Click + to open an inset comment card beside that side's
 code. Shift-click lines or + to select a range. Saved drafts keep the same card
 styling and survive restarts; Edit/Delete, collapsible cards and Viewed checkboxes
 are available. Gutter arrows reveal ten frozen-context lines above/below hunks
-or from either end of a gap between hunks in the same file. Viewed updates per file immediately,
-without dimming the other checkboxes. **Review & send** previews the batch before
-sending it to the originating idle agent. Difftastic supplies structural highlights
-with text fallback. Background changes never move an open editor's snapshot;
+or from either end of a gap between hunks in the same file. Viewed updates per
+file immediately, without dimming the other checkboxes. **Review & send** previews
+the batch before sending it to the originating idle agent. Difftastic supplies
+structural highlights with text fallback. Background changes never move an open editor's snapshot;
 outdated comments retain their original quotes.
 
-Build the Rust backend once after restoring these dotfiles (Rust/Cargo, Git and
-Difftastic 0.72.0 required):
+Source and tests belong exclusively to
+[herdr-changes](https://github.com/ddritzenhoff/herdr-changes), checked out at
+`vendor/herdr-changes/`. Dotfiles records its URL in `.gitmodules`, pins its
+commit via the submodule entry, and tracks three relative symlinks—not another
+copy of the mods/backend/tests. Drafts, code snapshots, viewed state and sent
+archives remain only in Git-ignored
+`data/review/`, outside the source checkout. See
+[the review guide](vendor/herdr-changes/tools/review-backend/README.md) for usage,
+safety limits and testing.
+
+### Developing and updating Changes
+
+Edit `vendor/herdr-changes` directly, or use the existing
+`~/programming/changes` convenience symlink to the same checkout. Edits through
+the live mod paths also change that checkout immediately. Do **not** run the
+upstream copy-based `scripts/install.sh` here; it would replace these links.
 
 ```sh
-sh ~/.config/herdr-app/tools/review-backend/build.sh
-herdr-app check ~/.config/herdr-app/mods/review
-herdr-app check ~/.config/herdr-app/mods/review-tabs
+cd ~/.config/herdr-app/vendor/herdr-changes
+npm test
+cargo test --locked --manifest-path tools/review-backend/Cargo.toml -- --include-ignored
+# Commit and push feature changes here when requested.
 ```
 
-Source: `tools/review-backend/` (Rust), `mods/review/` (native UI), and
-`mods/review-tabs/` (tab launcher). Drafts, code snapshots, viewed state and sent
-archives live only in Git-ignored `data/review/`. See [the review guide](tools/review-backend/README.md)
-for usage, safety limits and testing.
+After any Changes code/asset edits, save unsaved review comments and run the
+setup script again. It rebuilds/checks the mods and signals Herdr to reload by
+touching the mod symlinks, since Herdr's watcher does not follow their targets
+under `vendor/`. Source files are never copied or modified by this signal.
+Once a Changes commit is pushed, record the dependency update in
+**dotfiles**, not copies of its source:
+
+```sh
+git -C ~/.config add herdr-app/vendor/herdr-changes
+# Review, commit and push this pointer change separately when requested.
+```
+
+To deliberately upgrade to the latest published Changes revision, first ensure
+its worktree is clean, then:
+
+```sh
+git -C ~/.config/herdr-app/vendor/herdr-changes pull --ff-only origin main
+sh ~/.config/herdr-app/integrations/changes/setup.sh
+```
+
+Ordinary `git submodule update --init` restores the pinned version instead. It
+can leave the submodule on a detached HEAD; switch to/create a development branch
+before committing feature work. Use `git status` in **both** repositories when
+reviewing changes.
 
 ## Future changes
 

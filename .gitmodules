@@ -1,0 +1,3 @@
+[submodule "herdr-changes"]
+	path = herdr-app/vendor/herdr-changes
+	url = https://github.com/ddritzenhoff/herdr-changes.git
