@@ -11,7 +11,8 @@ push unless asked.
 - Read the app-generated `herdr-app/AGENTS.md` before changing Herdr. Do not
   edit or version it, the generated `.d.ts` files, or session/runtime state.
 - The personal layout is `herdr-app/layouts/my-layout.json`. Preserve its
-  frameless single-pane behavior and zero outer gutter unless asked otherwise.
+  frameless single-pane behavior, zero vertical gutter and balanced 4px
+  horizontal wrapper insets unless asked otherwise.
 - Use personal files; clone shipped layouts/mods before structural/code edits.
 - Keep settings, shortcuts, personal layouts/mods/themes and their assets
   eligible for Git tracking. Update `herdr-app/.gitignore` for new asset paths

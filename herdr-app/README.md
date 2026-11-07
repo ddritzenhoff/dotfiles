@@ -14,9 +14,10 @@ not automatically commit or push.
   including worktrees. Numbers follow space selection order and update on reorder.
 - `layouts/my-layout.json`: personal clone of Herdr's `main` layout. A lone
   pane has no frame or header (`lone: false`), and the workspace's outer
-  padding is zero. Terminal padding is also zero, so terminal programs can use
-  the full area without an inset gutter. Split panes keep their headers and
-  focus outlines.
+  padding and terminal padding are zero. The terminal block has a tiny 4px
+  horizontal wrapper inset to balance unused fractional-cell width between the
+  left and right sides (no columns lost at the current window size). Split panes
+  keep their headers and focus outlines.
 - `mods/my-status/`: personal clone of the bottom status bar. For the focused
   Pi terminal it shows effort, current context tokens/percentage, model, then
   caching, in that order. Cumulative input/output totals remain in tooltips.

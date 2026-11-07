@@ -1,9 +1,22 @@
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, agents, terminals, focused, theme, run, window, keys } from "herdr";
+import { spaces, agents, terminals, focused, theme, run, window, keys, appHome, readTextFile, writeTextFile } from "herdr";
 import { parseMetrics, metricsText, effortColor } from "./metrics.js";
+import { FocusScrollbars, scrollbarsForFocus } from "./scrollbars.js";
 
 export default class WorkspaceStatus extends View {
+  init() {
+    const path = `${appHome()}/settings.json`;
+    this.scrollbars = new FocusScrollbars(
+      () => readTextFile(path),
+      (text, expected) => writeTextFile(path, text, expected),
+    );
+  }
+
+  async close() {
+    await this.scrollbars?.restore();
+  }
+
   // The palette key as actually bound, not a hardcoded one; without a
   // binding the hint stays useful ("commands") instead of lying.
   hint(t) {
@@ -15,16 +28,23 @@ export default class WorkspaceStatus extends View {
     return key ? `${key}  commands` : "commands";
   }
 
-  render() {
+  render(cx) {
     const t = theme();
     const space = spaces().find(s => s.active);
     const list = agents();
     const needs = list.filter(a => a.status === "blocked").length;
     const focus = focused();
+    const allTerminals = terminals();
+    if (window()?.active !== false && this.scrollbars?.request(scrollbarsForFocus(focus, list, allTerminals))) {
+      cx.spawn(async () => {
+        try { await this.scrollbars.flush(); }
+        catch (error) { console.warn(`[my-status scrollbars] ${error.message}`); }
+      });
+    }
     const address = focus?.shown ?? focus?.terminal;
     const agent = list.find(a => a.address === address);
     const isPi = agent?.app === "pi" || agent?.program?.key === "pi";
-    const data = isPi ? parseMetrics(terminals().find(a => a.address === address)) : null;
+    const data = isPi ? parseMetrics(allTerminals.find(a => a.address === address)) : null;
     const width = this.width ?? 1200;
     const label = (icon, text) => h_flex().gap(6).items_center().child(svg(`mods/workspace-chrome/${icon}.svg`).size(13)).child(text);
     const metric = (id, text, detail, color = t.muted) => div().id(id).flex_shrink_0()

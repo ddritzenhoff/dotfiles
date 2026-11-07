@@ -93,6 +93,7 @@
             {
               "id": "main",
               "type": "block",
+              "padding": [0, 4],
               "content": {
                 "tab": "active",
                 "pane": {
